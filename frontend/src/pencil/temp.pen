@@ -1,0 +1,33 @@
+{
+  "version": "2.11",
+  "children": [
+    {
+      "type": "frame",
+      "id": "verify_box_123",
+      "x": 0,
+      "y": 0,
+      "name": "TEST_BOX_SUCCESS",
+      "width": 500,
+      "height": 500,
+      "fill": "#ffffff",
+      "children": [
+        {
+          "type": "text",
+          "id": "verify_text_123",
+          "content": "MCP VERIFIED - WHITE BOX",
+          "fontSize": 24,
+          "fill": "#000000",
+          "x": 100,
+          "y": 200,
+          "fontFamily": "Inter"
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "background": {
+      "type": "color",
+      "value": "#faf8ff"
+    }
+  }
+}
