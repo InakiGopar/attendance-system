@@ -103,6 +103,19 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>11.14.1</version>
+
+                <configuration>
+                    <url>jdbc:postgresql://localhost:5432/attendance_db</url>
+                    <user>admin</user>
+                    <password>admin</password>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

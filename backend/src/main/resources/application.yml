@@ -1,0 +1,27 @@
+spring:
+  application.name:
+    attendance-system
+  datasource:
+    url: jdbc:postgresql://localhost:5432/attendance_db
+    username: admin
+    password: admin
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+    show-sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8080
+
