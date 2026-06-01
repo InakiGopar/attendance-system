@@ -1,8 +1,7 @@
-package com.backend.attendancesystem.user.models.entities;
+package com.backend.attendancesystem.course.model;
 
 import jakarta.persistence.*;
-import com.backend.attendancesystem.institution.models.entities.InstitutionEntity;
-import com.backend.attendancesystem.enums.RoleType;
+import com.backend.attendancesystem.institution.model.InstitutionEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,34 +9,21 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "app_user")
+@Table(name = "course")
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserEntity {
+public class CourseEntity {
     @Id
-    @Column(name = "user_id")
-    private UUID userId;
+    @Column(name = "course_id")
+    private UUID courseId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", nullable = false)
     private InstitutionEntity institution;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private RoleType role;
-
     @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
-
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
-
-    @Column(name = "password", nullable = false)
-    private String password;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

@@ -1,28 +1,26 @@
-package com.backend.attendancesystem.enrollment.models.entities;
+package com.backend.attendancesystem.institution.model;
 
 import jakarta.persistence.*;
-import com.backend.attendancesystem.student.models.entities.StudentEntity;
-import com.backend.attendancesystem.course.models.entities.CourseEntity;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "enrollment")
+@Table(name = "institution")
 @Getter
 @Setter
 @NoArgsConstructor
-public class EnrollmentEntity {
+@AllArgsConstructor
+public class InstitutionEntity {
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", nullable = false)
-    private StudentEntity student;
+    @Column(name = "institution_id")
+    private UUID institutionId;
 
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = false)
-    private CourseEntity course;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

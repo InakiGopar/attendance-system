@@ -1,14 +1,15 @@
-package com.backend.attendancesystem.attendance.models.entities;
+package com.backend.attendancesystem.attendance.model;
 
 import com.backend.attendancesystem.enums.AttendanceStatus;
 import jakarta.persistence.*;
-import com.backend.attendancesystem.institution.models.entities.InstitutionEntity;
+import com.backend.attendancesystem.institution.model.InstitutionEntity;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.backend.attendancesystem.student.models.entities.StudentEntity;
-import com.backend.attendancesystem.course.models.entities.CourseEntity;
-import com.backend.attendancesystem.user.models.entities.UserEntity;
+import com.backend.attendancesystem.student.model.StudentEntity;
+import com.backend.attendancesystem.course.model.CourseEntity;
+import com.backend.attendancesystem.user.model.UserEntity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "attendance", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"student_id", "course_id", "attendance_date"})
 })

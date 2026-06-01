@@ -1,10 +1,10 @@
-package com.backend.attendancesystem.schedule.models.entities;
+package com.backend.attendancesystem.schedule.model;
 
 import com.backend.attendancesystem.enums.WeekDay;
 import jakarta.persistence.*;
-import com.backend.attendancesystem.institution.models.entities.InstitutionEntity;
-import com.backend.attendancesystem.course.models.entities.CourseEntity;
-import com.backend.attendancesystem.user.models.entities.UserEntity;
+import com.backend.attendancesystem.institution.model.InstitutionEntity;
+import com.backend.attendancesystem.course.model.CourseEntity;
+import com.backend.attendancesystem.user.model.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
