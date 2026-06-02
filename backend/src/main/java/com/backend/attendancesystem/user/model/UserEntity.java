@@ -6,6 +6,9 @@ import com.backend.attendancesystem.enums.RoleType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -24,7 +27,8 @@ public class UserEntity {
     private InstitutionEntity institution;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "role", columnDefinition = "role_type", nullable = false)
     private RoleType role;
 
     @Column(name = "name", nullable = false)

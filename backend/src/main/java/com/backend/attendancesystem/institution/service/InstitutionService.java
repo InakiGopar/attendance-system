@@ -1,5 +1,8 @@
 package com.backend.attendancesystem.institution.service;
 
+import com.backend.attendancesystem.institution.dto.InstitutionRequest;
+import com.backend.attendancesystem.institution.dto.InstitutionResponse;
+import com.backend.attendancesystem.institution.mapper.InstitutionMapper;
 import com.backend.attendancesystem.institution.model.InstitutionEntity;
 import com.backend.attendancesystem.institution.repository.InstitutionRepository;
 import jakarta.transaction.Transactional;
@@ -16,33 +19,44 @@ public class InstitutionService {
     private final InstitutionRepository institutionRepository;
 
     @Transactional
-    public InstitutionEntity saveInstitution(InstitutionEntity institution) {
-        return institutionRepository.save(institution);
+    public InstitutionResponse saveInstitution(InstitutionRequest request) {
+        return InstitutionMapper.toResponse(
+                institutionRepository.save(
+                        InstitutionMapper.toEntity(request)
+                ));
     }
 
     @Transactional
-    public InstitutionEntity updateInstitution(UUID institutionId, InstitutionEntity request) {
+    public InstitutionResponse updateInstitution(UUID institutionId, InstitutionRequest request) {
         //todo: add exception handling
         InstitutionEntity institution = institutionRepository.findById(institutionId)
                 .orElseThrow(() -> new RuntimeException("Institution not found"));
-        institution.setName(request.getName());
-        return institution;
+        institution.setName(request.name());
+
+        return InstitutionMapper.toResponse(institution);
     }
 
     @Transactional
     public void deleteInstitution(UUID institutionId) {
         //todo: add exception handling
+        institutionRepository.findById(institutionId)
+                .orElseThrow(() -> new RuntimeException("Institution not found"));
         institutionRepository.deleteById(institutionId);
     }
 
-    public InstitutionEntity getInstitution(UUID institutionId) {
+    public InstitutionResponse getInstitution(UUID institutionId) {
         //todo: add exception handling
-        return institutionRepository.findById(institutionId)
-                .orElseThrow(() -> new RuntimeException("Institution not found"));
+         return InstitutionMapper.toResponse(
+                 institutionRepository.findById(institutionId)
+                         .orElseThrow(() -> new RuntimeException("Institution not found"))
+         );
+
     }
 
-    public List<InstitutionEntity> getAllInstitutions() {
-        return institutionRepository.findAll();
+    public List<InstitutionResponse> getAllInstitutions() {
+        return institutionRepository.findAll().stream()
+                .map(InstitutionMapper::toResponse)
+                .toList();
     }
 
 

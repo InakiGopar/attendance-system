@@ -8,6 +8,9 @@ import com.backend.attendancesystem.user.model.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
@@ -37,7 +40,8 @@ public class ScheduleEntity {
     private UserEntity user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "day", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "day", columnDefinition = "week_day", nullable = false)
     private WeekDay day;
 
     @Column(name = "from_time", nullable = false)

@@ -10,6 +10,9 @@ import lombok.Setter;
 import com.backend.attendancesystem.student.model.StudentEntity;
 import com.backend.attendancesystem.course.model.CourseEntity;
 import com.backend.attendancesystem.user.model.UserEntity;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -47,7 +50,8 @@ public class AttendanceEntity {
     private LocalDate attendanceDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "status", columnDefinition = "attendance_status", nullable = false)
     private AttendanceStatus status;
 
     @Column(name = "observations", columnDefinition = "TEXT")
