@@ -3,6 +3,7 @@ package com.backend.attendancesystem.student.controller;
 import com.backend.attendancesystem.student.dto.StudentRequest;
 import com.backend.attendancesystem.student.dto.StudentResponse;
 import com.backend.attendancesystem.student.service.StudentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,13 @@ public class StudentController {
     private final StudentService studentService;
 
     @PostMapping
-    public ResponseEntity<StudentResponse> saveStudent(@RequestBody StudentRequest request) {
+    public ResponseEntity<StudentResponse> saveStudent( @Valid @RequestBody StudentRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(studentService.saveStudent(request));
     }
 
     @PutMapping("/{studentId}")
     public ResponseEntity<StudentResponse> updateStudent(@PathVariable UUID studentId,
-                                                         @RequestBody StudentRequest request) {
+                                                         @Valid @RequestBody StudentRequest request) {
         
         return ResponseEntity.ok(studentService.updateStudent(studentId, request));
     }

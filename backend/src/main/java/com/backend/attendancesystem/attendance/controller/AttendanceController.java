@@ -3,6 +3,7 @@ package com.backend.attendancesystem.attendance.controller;
 import com.backend.attendancesystem.attendance.dto.AttendanceRequest;
 import com.backend.attendancesystem.attendance.dto.AttendanceResponse;
 import com.backend.attendancesystem.attendance.service.AttendanceService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,13 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
     @PostMapping
-    public ResponseEntity<AttendanceResponse> saveAttendance(@RequestBody AttendanceRequest request) {
+    public ResponseEntity<AttendanceResponse> saveAttendance(@Valid @RequestBody AttendanceRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(attendanceService.saveAttendance(request));
     }
 
     @PutMapping("/{attendanceId}")
     public ResponseEntity<AttendanceResponse> updateAttendance(@PathVariable UUID attendanceId,
-                                                                 @RequestBody AttendanceRequest request) {
+                                                                 @Valid @RequestBody AttendanceRequest request) {
         
         return ResponseEntity.ok(attendanceService.updateAttendance(attendanceId, request));
     }
