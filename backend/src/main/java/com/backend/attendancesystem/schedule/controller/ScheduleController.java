@@ -3,6 +3,7 @@ package com.backend.attendancesystem.schedule.controller;
 import com.backend.attendancesystem.schedule.dto.ScheduleRequest;
 import com.backend.attendancesystem.schedule.dto.ScheduleResponse;
 import com.backend.attendancesystem.schedule.service.ScheduleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,13 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping
-    public ResponseEntity<ScheduleResponse> saveSchedule(@RequestBody ScheduleRequest request) {
+    public ResponseEntity<ScheduleResponse> saveSchedule( @Valid @RequestBody ScheduleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.saveSchedule(request));
     }
 
     @PutMapping("/{scheduleId}")
     public ResponseEntity<ScheduleResponse> updateSchedule(@PathVariable UUID scheduleId,
-                                                           @RequestBody ScheduleRequest request) {
+                                                           @Valid @RequestBody ScheduleRequest request) {
         
         return ResponseEntity.ok(scheduleService.updateSchedule(scheduleId, request));
     }

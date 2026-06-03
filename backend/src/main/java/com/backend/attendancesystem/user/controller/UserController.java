@@ -3,6 +3,7 @@ package com.backend.attendancesystem.user.controller;
 import com.backend.attendancesystem.user.dto.UserRequest;
 import com.backend.attendancesystem.user.dto.UserResponse;
 import com.backend.attendancesystem.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponse> saveUser(@RequestBody UserRequest request) {
+    public ResponseEntity<UserResponse> saveUser( @Valid @RequestBody UserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(request));
     }
 
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable UUID userId,
-                                                  @RequestBody UserRequest request) {
+                                                  @Valid @RequestBody UserRequest request) {
         
         return ResponseEntity.ok(userService.updateUser(userId, request));
     }

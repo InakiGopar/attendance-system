@@ -3,6 +3,7 @@ package com.backend.attendancesystem.enrollment.controller;
 import com.backend.attendancesystem.enrollment.dto.EnrollmentRequest;
 import com.backend.attendancesystem.enrollment.dto.EnrollmentResponse;
 import com.backend.attendancesystem.enrollment.service.EnrollmentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
 
     @PostMapping
-    public ResponseEntity<EnrollmentResponse> saveEnrollment(@RequestBody EnrollmentRequest request) {
+    public ResponseEntity<EnrollmentResponse> saveEnrollment(@Valid @RequestBody EnrollmentRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(enrollmentService.saveEnrollment(request));
     }
 

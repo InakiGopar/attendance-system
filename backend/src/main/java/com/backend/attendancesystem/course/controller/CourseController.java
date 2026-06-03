@@ -3,6 +3,7 @@ package com.backend.attendancesystem.course.controller;
 import com.backend.attendancesystem.course.dto.CourseRequest;
 import com.backend.attendancesystem.course.dto.CourseResponse;
 import com.backend.attendancesystem.course.service.CourseService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,13 @@ public class CourseController {
     private final CourseService courseService;
 
     @PostMapping
-    public ResponseEntity<CourseResponse> saveCourse(@RequestBody CourseRequest request) {
+    public ResponseEntity<CourseResponse> saveCourse( @Valid @RequestBody CourseRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(courseService.saveCourse(request));
     }
 
     @PutMapping("/{courseId}")
     public ResponseEntity<CourseResponse> updateCourse(@PathVariable UUID courseId,
-                                                       @RequestBody CourseRequest request) {
+                                                       @Valid @RequestBody CourseRequest request) {
         
         return ResponseEntity.ok(courseService.updateCourse(courseId, request));
     }
