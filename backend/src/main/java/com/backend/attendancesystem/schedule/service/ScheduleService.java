@@ -5,6 +5,7 @@ import com.backend.attendancesystem.schedule.dto.ScheduleResponse;
 import com.backend.attendancesystem.schedule.mapper.ScheduleMapper;
 import com.backend.attendancesystem.schedule.model.ScheduleEntity;
 import com.backend.attendancesystem.schedule.repository.ScheduleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,8 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponse updateSchedule(UUID scheduleId, ScheduleRequest request) {
-        //todo: add exception handling
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Schedule not found with id: " + scheduleId));
         
         schedule.setDay(request.day());
         schedule.setFromTime(request.fromTime());
@@ -40,17 +40,15 @@ public class ScheduleService {
 
     @Transactional
     public void deleteSchedule(UUID scheduleId) {
-        //todo: add exception handling
         scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Schedule not found with id: " + scheduleId));
         scheduleRepository.deleteById(scheduleId);
     }
 
     public ScheduleResponse getSchedule(UUID scheduleId) {
-        //todo: add exception handling
          return ScheduleMapper.toResponse(
                  scheduleRepository.findById(scheduleId)
-                         .orElseThrow(() -> new RuntimeException("Schedule not found"))
+                         .orElseThrow(() -> new EntityNotFoundException("Schedule not found with id: " + scheduleId))
          );
 
     }

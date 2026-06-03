@@ -5,6 +5,7 @@ import com.backend.attendancesystem.student.dto.StudentResponse;
 import com.backend.attendancesystem.student.mapper.StudentMapper;
 import com.backend.attendancesystem.student.model.StudentEntity;
 import com.backend.attendancesystem.student.repository.StudentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,8 @@ public class StudentService {
 
     @Transactional
     public StudentResponse updateStudent(UUID studentId, StudentRequest request) {
-        //todo: add exception handling
         StudentEntity student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
         student.setName(request.name());
         student.setLastName(request.lastName());
         student.setBirthDate(request.birthDate());
@@ -40,17 +40,15 @@ public class StudentService {
 
     @Transactional
     public void deleteStudent(UUID studentId) {
-        //todo: add exception handling
         studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
         studentRepository.deleteById(studentId);
     }
 
     public StudentResponse getStudent(UUID studentId) {
-        //todo: add exception handling
          return StudentMapper.toResponse(
                  studentRepository.findById(studentId)
-                         .orElseThrow(() -> new RuntimeException("Student not found"))
+                         .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId))
          );
 
     }

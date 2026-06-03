@@ -5,6 +5,7 @@ import com.backend.attendancesystem.course.dto.CourseResponse;
 import com.backend.attendancesystem.course.mapper.CourseMapper;
 import com.backend.attendancesystem.course.model.CourseEntity;
 import com.backend.attendancesystem.course.repository.CourseRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,8 @@ public class CourseService {
 
     @Transactional
     public CourseResponse updateCourse(UUID courseId, CourseRequest request) {
-        //todo: add exception handling
         CourseEntity course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with the id: " + courseId));
         course.setName(request.name());
 
         return CourseMapper.toResponse(course);
@@ -37,17 +37,15 @@ public class CourseService {
 
     @Transactional
     public void deleteCourse(UUID courseId) {
-        //todo: add exception handling
         courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with the id: " + courseId));
         courseRepository.deleteById(courseId);
     }
 
     public CourseResponse getCourse(UUID courseId) {
-        //todo: add exception handling
          return CourseMapper.toResponse(
                  courseRepository.findById(courseId)
-                         .orElseThrow(() -> new RuntimeException("Course not found"))
+                         .orElseThrow(() -> new EntityNotFoundException("Course not found with the id: " + courseId))
          );
 
     }

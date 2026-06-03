@@ -5,6 +5,7 @@ import com.backend.attendancesystem.attendance.dto.AttendanceResponse;
 import com.backend.attendancesystem.attendance.mapper.AttendanceMapper;
 import com.backend.attendancesystem.attendance.model.AttendanceEntity;
 import com.backend.attendancesystem.attendance.repository.AttendanceRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,8 @@ public class AttendanceService {
 
     @Transactional
     public AttendanceResponse updateAttendance(UUID attendanceId, AttendanceRequest request) {
-        //todo: add exception handling
         AttendanceEntity attendance = attendanceRepository.findById(attendanceId)
-                .orElseThrow(() -> new RuntimeException("Attendance not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Attendance not found with the id: " + attendanceId));
         
         attendance.setAttendanceDate(request.attendanceDate());
         attendance.setStatus(request.status());
@@ -40,17 +40,15 @@ public class AttendanceService {
 
     @Transactional
     public void deleteAttendance(UUID attendanceId) {
-        //todo: add exception handling
         attendanceRepository.findById(attendanceId)
-                .orElseThrow(() -> new RuntimeException("Attendance not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Attendance not found with the id: " + attendanceId));
         attendanceRepository.deleteById(attendanceId);
     }
 
     public AttendanceResponse getAttendance(UUID attendanceId) {
-        //todo: add exception handling
          return AttendanceMapper.toResponse(
                  attendanceRepository.findById(attendanceId)
-                         .orElseThrow(() -> new RuntimeException("Attendance not found"))
+                         .orElseThrow(() -> new EntityNotFoundException("Attendance not found with the id: " + attendanceId))
          );
 
     }

@@ -6,6 +6,7 @@ import com.backend.attendancesystem.enrollment.mapper.EnrollmentMapper;
 import com.backend.attendancesystem.enrollment.model.EnrollmentEntity;
 import com.backend.attendancesystem.enrollment.model.EnrollmentId;
 import com.backend.attendancesystem.enrollment.repository.EnrollmentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,25 +30,29 @@ public class EnrollmentService {
 
     @Transactional
     public void deleteEnrollment(UUID studentId, UUID courseId) {
-        //todo: add exception handling
         EnrollmentId id = new EnrollmentId();
         id.setStudentId(studentId);
         id.setCourseId(courseId);
-        
         enrollmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+                .orElseThrow(() -> new EntityNotFoundException( "Enrollment not found for student "
+                        + studentId +
+                        " and course "
+                        + courseId));
+
         enrollmentRepository.deleteById(id);
     }
 
     public EnrollmentResponse getEnrollment(UUID studentId, UUID courseId) {
-        //todo: add exception handling
         EnrollmentId id = new EnrollmentId();
         id.setStudentId(studentId);
         id.setCourseId(courseId);
         
         return EnrollmentMapper.toResponse(
                 enrollmentRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Enrollment not found"))
+                        .orElseThrow(() -> new EntityNotFoundException( "Enrollment not found for student "
+                                + studentId +
+                                " and course "
+                                + courseId))
         );
     }
 

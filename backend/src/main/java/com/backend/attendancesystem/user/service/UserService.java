@@ -5,6 +5,7 @@ import com.backend.attendancesystem.user.dto.UserResponse;
 import com.backend.attendancesystem.user.mapper.UserMapper;
 import com.backend.attendancesystem.user.model.UserEntity;
 import com.backend.attendancesystem.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,8 @@ public class UserService {
 
     @Transactional
     public UserResponse updateUser(UUID userId, UserRequest request) {
-        //todo: add exception handling
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
         user.setRole(request.role());
         user.setName(request.name());
         user.setLastName(request.lastName());
@@ -41,17 +41,15 @@ public class UserService {
 
     @Transactional
     public void deleteUser(UUID userId) {
-        //todo: add exception handling
         userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId ));
         userRepository.deleteById(userId);
     }
 
     public UserResponse getUser(UUID userId) {
-        //todo: add exception handling
          return UserMapper.toResponse(
                  userRepository.findById(userId)
-                         .orElseThrow(() -> new RuntimeException("User not found"))
+                         .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId))
          );
 
     }
