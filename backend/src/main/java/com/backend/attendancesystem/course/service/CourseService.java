@@ -5,6 +5,7 @@ import com.backend.attendancesystem.course.dto.CourseResponse;
 import com.backend.attendancesystem.course.mapper.CourseMapper;
 import com.backend.attendancesystem.course.model.CourseEntity;
 import com.backend.attendancesystem.course.repository.CourseRepository;
+import com.backend.attendancesystem.institution.repository.InstitutionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CourseService {
     private final CourseRepository courseRepository;
+    private final InstitutionRepository institutionRepository;
 
     @Transactional
     public CourseResponse saveCourse(CourseRequest request) {
+        //check 1
+        institutionRepository.findById(request.institutionId())
+                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+
         return CourseMapper.toResponse(
                 courseRepository.save(
                         CourseMapper.toEntity(request)
@@ -28,8 +34,14 @@ public class CourseService {
 
     @Transactional
     public CourseResponse updateCourse(UUID courseId, CourseRequest request) {
+        //check 1
         CourseEntity course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("Course not found with the id: " + courseId));
+
+        //check 2
+        institutionRepository.findById(request.institutionId())
+                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+
         course.setName(request.name());
 
         return CourseMapper.toResponse(course);

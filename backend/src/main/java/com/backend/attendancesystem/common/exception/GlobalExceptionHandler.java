@@ -42,8 +42,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 List.of("Invalid request",
-                        "One or more fields contain invalid values",
-                        ex.getMessage())
+                        "Invalid type value")
         );
 
         return ResponseEntity.badRequest().body(body);

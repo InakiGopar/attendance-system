@@ -1,5 +1,6 @@
 package com.backend.attendancesystem.student.service;
 
+import com.backend.attendancesystem.institution.repository.InstitutionRepository;
 import com.backend.attendancesystem.student.dto.StudentRequest;
 import com.backend.attendancesystem.student.dto.StudentResponse;
 import com.backend.attendancesystem.student.mapper.StudentMapper;
@@ -17,9 +18,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final InstitutionRepository institutionRepository;
 
     @Transactional
     public StudentResponse saveStudent(StudentRequest request) {
+        //check 1
+        institutionRepository.findById(request.institutionId())
+                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+
         return StudentMapper.toResponse(
                 studentRepository.save(
                         StudentMapper.toEntity(request)
@@ -28,8 +34,14 @@ public class StudentService {
 
     @Transactional
     public StudentResponse updateStudent(UUID studentId, StudentRequest request) {
+        //check 1
         StudentEntity student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
+
+        //check 2
+        institutionRepository.findById(request.institutionId())
+                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+
         student.setName(request.name());
         student.setLastName(request.lastName());
         student.setBirthDate(request.birthDate());
