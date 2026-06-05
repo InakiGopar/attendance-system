@@ -1,5 +1,6 @@
 package com.backend.attendancesystem.user.service;
 
+import com.backend.attendancesystem.institution.repository.InstitutionRepository;
 import com.backend.attendancesystem.user.dto.UserRequest;
 import com.backend.attendancesystem.user.dto.UserResponse;
 import com.backend.attendancesystem.user.mapper.UserMapper;
@@ -17,9 +18,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final InstitutionRepository institutionRepository;
 
     @Transactional
     public UserResponse saveUser(UserRequest request) {
+        //check 1
+        institutionRepository.findById(request.institutionId())
+                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+
         return UserMapper.toResponse(
                 userRepository.save(
                         UserMapper.toEntity(request)
@@ -28,8 +34,14 @@ public class UserService {
 
     @Transactional
     public UserResponse updateUser(UUID userId, UserRequest request) {
+        //check 1
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        //check 2
+        institutionRepository.findById(request.institutionId())
+                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+
         user.setRole(request.role());
         user.setName(request.name());
         user.setLastName(request.lastName());
