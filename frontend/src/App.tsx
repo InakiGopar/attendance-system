@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ProfessorPanelScreen }    from './components/screens/ProfessorPanelScreen'
 import { StudentManagementScreen } from './components/screens/StudentManagementScreen'
 import { AttendanceScreen }        from './components/screens/AttendanceScreen'
