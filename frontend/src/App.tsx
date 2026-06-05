@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ProfessorPanelScreen }    from './components/screens/ProfessorPanelScreen'
 import { StudentManagementScreen } from './components/screens/StudentManagementScreen'
 import { AttendanceScreen }        from './components/screens/AttendanceScreen'
@@ -15,25 +15,22 @@ function App() {
   const [screen, setScreen]       = useState<ActiveScreen>('professor-panel')
   const [activeTab, setActiveTab] = useState<NavTab>('classes')
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // TODO: Improve code.
   (async () => {
-    fetch('http://localhost:8080/users', {credentials: 'include'}) // credentials: 'include' es vital para enviar la cookie
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users`, {credentials: 'include'})
       .then(response => {
         if (response.status === 401) {
-            // El usuario no está autenticado. Redirigimos la ventana completa al flujo OAuth2
-            window.location.href = "http://localhost:8080/oauth2/authorization/google";
-            console.log("401")
+            window.location.href = `${import.meta.env.VITE_BACKEND_URL}/oauth2/authorization/google`;
         } else {
             return response.json();
         }
       })
       .then(data => {
-        console.log(data)
         data === undefined ? null : setIsLoading(false);
       })
       .catch(error => console.error(error))
   })();
-
-  console.log(isLoading)
 
   if (isLoading) return <h1>Loading...</h1>
 
