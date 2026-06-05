@@ -1,6 +1,8 @@
 spring:
-  application.name:
-    attendance-system
+  application.name: attendance-system
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
     url: jdbc:postgresql://localhost:5432/attendance_db
     username: admin
@@ -26,7 +28,15 @@ spring:
     user:
       name: admin
       password: admin
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - profile
+              - email
 
 server:
   port: 8080
-
