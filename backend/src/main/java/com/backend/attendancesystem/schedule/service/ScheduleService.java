@@ -1,5 +1,6 @@
 package com.backend.attendancesystem.schedule.service;
 
+import com.backend.attendancesystem.common.exception.InvalidInstitutionException;
 import com.backend.attendancesystem.course.model.CourseEntity;
 import com.backend.attendancesystem.course.repository.CourseRepository;
 import com.backend.attendancesystem.institution.model.InstitutionEntity;
@@ -41,8 +42,7 @@ public class ScheduleService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + request.userId()));
         //check 4
         if (!course.getInstitution().equals(institution) || !user.getInstitution().equals(course.getInstitution())) {
-            //todo: add domain exception
-            throw new RuntimeException("Institution must match with user and course");
+            throw new InvalidInstitutionException("User and course must be from the same institution");
         }
 
         return ScheduleMapper.toResponse(
@@ -67,8 +67,7 @@ public class ScheduleService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + request.userId()));
 
         if (!course.getInstitution().equals(institution) || !user.getInstitution().equals(course.getInstitution())) {
-            //todo: add domain exception
-            throw new RuntimeException("Institution must match with user and course");
+            throw new InvalidInstitutionException("User and course must be from the same institution");
         }
 
         schedule.setInstitution(institution);
