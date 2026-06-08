@@ -60,6 +60,32 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
+    //todo dao exception
+
+
+    // Handle invalid institution match
+    @ExceptionHandler(InvalidInstitutionException.class)
+    public ResponseEntity<ApiError> handleInvalidInstitutionException(InvalidInstitutionException ex) {
+        ApiError body = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                List.of(ex.getMessage())
+        );
+        return ResponseEntity.badRequest().body(body);
+    }
+
+
+    // Handle student course enrollment exception
+    @ExceptionHandler(StudentCourseException.class)
+    public ResponseEntity<ApiError> handleStudentCourseException(StudentCourseException ex) {
+        ApiError body = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                List.of(ex.getMessage())
+        );
+        return ResponseEntity.badRequest().body(body);
+    }
+
     // Handle generic exception
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGenericException(Exception ex) {

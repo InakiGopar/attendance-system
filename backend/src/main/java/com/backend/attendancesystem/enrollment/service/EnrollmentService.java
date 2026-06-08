@@ -1,5 +1,6 @@
 package com.backend.attendancesystem.enrollment.service;
 
+import com.backend.attendancesystem.common.exception.InvalidInstitutionException;
 import com.backend.attendancesystem.course.model.CourseEntity;
 import com.backend.attendancesystem.course.repository.CourseRepository;
 import com.backend.attendancesystem.enrollment.dto.EnrollmentRequest;
@@ -36,8 +37,7 @@ public class EnrollmentService {
                 .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + request.courseId()));
         //check 3
         if (!student.getInstitution().equals(course.getInstitution())) {
-            //todo: add domain exception
-            throw new RuntimeException("Student and course must be from the same institution");
+            throw new InvalidInstitutionException("Student and course must be from the same institution");
         }
 
         return EnrollmentMapper.toResponse(

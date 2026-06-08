@@ -5,6 +5,8 @@ import com.backend.attendancesystem.attendance.dto.AttendanceResponse;
 import com.backend.attendancesystem.attendance.mapper.AttendanceMapper;
 import com.backend.attendancesystem.attendance.model.AttendanceEntity;
 import com.backend.attendancesystem.attendance.repository.AttendanceRepository;
+import com.backend.attendancesystem.common.exception.InvalidInstitutionException;
+import com.backend.attendancesystem.common.exception.StudentCourseException;
 import com.backend.attendancesystem.course.model.CourseEntity;
 import com.backend.attendancesystem.course.repository.CourseRepository;
 import com.backend.attendancesystem.enrollment.model.EnrollmentId;
@@ -50,8 +52,7 @@ public class AttendanceService {
         //check 5
         if (!student.getInstitution().equals(institution) || !course.getInstitution().equals(institution)
             || !user.getInstitution().equals(institution)) {
-            //todo: add domain exception
-            throw new RuntimeException("Student, course and user must match in the same institution");
+            throw new InvalidInstitutionException("Student, course and user must match in the same institution");
         }
 
         //check 6
@@ -60,8 +61,7 @@ public class AttendanceService {
         enrollmentId.setStudentId(request.studentId());
 
         if (!enrollmentRepository.existsById(enrollmentId)) {
-            //todo: add domain exception
-            throw new RuntimeException("Student is not enrolled in the course");
+            throw new StudentCourseException("Student is not enrolled in the course");
         }
 
 
@@ -92,8 +92,7 @@ public class AttendanceService {
         //check 6
         if (!student.getInstitution().equals(institution) || !course.getInstitution().equals(institution)
                 || !user.getInstitution().equals(institution)) {
-            //todo: add domain exception
-            throw new RuntimeException("Student, course and user must match in the same institution");
+            throw new InvalidInstitutionException("Student, course and user must match in the same institution");
         }
 
         //check 7
@@ -102,8 +101,7 @@ public class AttendanceService {
         enrollmentId.setStudentId(request.studentId());
 
         if (!enrollmentRepository.existsById(enrollmentId)) {
-            //todo: add domain exception
-            throw new RuntimeException("Student is not enrolled in the course");
+            throw new StudentCourseException("Student is not enrolled in the course");
         }
 
         attendance.setStudent(student);
