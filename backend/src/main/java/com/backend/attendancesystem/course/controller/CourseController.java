@@ -1,5 +1,6 @@
 package com.backend.attendancesystem.course.controller;
 
+import com.backend.attendancesystem.course.dto.AttendanceSheetResponse;
 import com.backend.attendancesystem.course.dto.CourseRequest;
 import com.backend.attendancesystem.course.dto.CourseResponse;
 import com.backend.attendancesystem.course.service.CourseService;
@@ -44,5 +45,14 @@ public class CourseController {
     @GetMapping
     public ResponseEntity<List<CourseResponse>> getCourses() {
         return ResponseEntity.ok(courseService.getAllCourses());
+    }
+
+    @GetMapping("/{courseId}/attendance-sheet")
+    public ResponseEntity<AttendanceSheetResponse> getAttendanceSheet(
+            @PathVariable UUID courseId) {
+
+        return ResponseEntity.ok(
+                courseService.getAttendanceSheet(courseId)
+        );
     }
 }

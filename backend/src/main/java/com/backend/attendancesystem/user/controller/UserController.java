@@ -1,5 +1,6 @@
 package com.backend.attendancesystem.user.controller;
 
+import com.backend.attendancesystem.user.dto.UserCourseResponse;
 import com.backend.attendancesystem.user.dto.UserRequest;
 import com.backend.attendancesystem.user.dto.UserResponse;
 import com.backend.attendancesystem.user.service.UserService;
@@ -44,5 +45,10 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/{userId}/courses/today")
+    public ResponseEntity<List<UserCourseResponse>> getTodayCourses(@PathVariable UUID userId) {
+        return ResponseEntity.ok(userService.getTodayCourses(userId));
     }
 }

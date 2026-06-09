@@ -1,6 +1,7 @@
 package com.backend.attendancesystem.common.exception;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.hibernate.JDBCException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +62,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
-    //todo dao exception
+    //handle data integrity violation
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         ApiError body = new ApiError(
@@ -73,6 +74,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
+    //handle jdbc exception
+    @ExceptionHandler(JDBCException.class)
+    public ResponseEntity<ApiError> handleDataIntegrityViolationException(JDBCException ex) {
+        ApiError body = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                List.of("JDBC Exception")
+        );
+
+        return ResponseEntity.badRequest().body(body);
+    }
 
     // Handle invalid institution match
     @ExceptionHandler(InvalidInstitutionException.class)
