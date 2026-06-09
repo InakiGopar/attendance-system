@@ -1,16 +1,20 @@
 package com.backend.attendancesystem.course.service;
 
+import com.backend.attendancesystem.course.dto.AttendanceSheetResponse;
+import com.backend.attendancesystem.course.dto.AttendanceSheetStudentResponse;
 import com.backend.attendancesystem.course.dto.CourseRequest;
 import com.backend.attendancesystem.course.dto.CourseResponse;
 import com.backend.attendancesystem.course.mapper.CourseMapper;
 import com.backend.attendancesystem.course.model.CourseEntity;
 import com.backend.attendancesystem.course.repository.CourseRepository;
+import com.backend.attendancesystem.enrollment.repository.EnrollmentRepository;
 import com.backend.attendancesystem.institution.repository.InstitutionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +23,7 @@ import java.util.UUID;
 public class CourseService {
     private final CourseRepository courseRepository;
     private final InstitutionRepository institutionRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     @Transactional
     public CourseResponse saveCourse(CourseRequest request) {
@@ -64,6 +69,25 @@ public class CourseService {
         return courseRepository.findAll().stream()
                 .map(CourseMapper::toResponse)
                 .toList();
+    }
+
+    public AttendanceSheetResponse getAttendanceSheet(UUID courseId) {
+
+        CourseEntity course = courseRepository.findById(courseId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Course not found with id: " + courseId
+                        ));
+
+        List<AttendanceSheetStudentResponse> students =
+                enrollmentRepository.findStudentsByCourseId(courseId);
+
+        return new AttendanceSheetResponse(
+                course.getCourseId(),
+                course.getName(),
+                LocalDate.now(),
+                students
+        );
     }
 
     //helper method

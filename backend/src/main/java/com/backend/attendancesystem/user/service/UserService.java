@@ -1,6 +1,10 @@
 package com.backend.attendancesystem.user.service;
 
+import com.backend.attendancesystem.enums.WeekDay;
+import com.backend.attendancesystem.enums.mapper.WeekDayMapper;
 import com.backend.attendancesystem.institution.repository.InstitutionRepository;
+import com.backend.attendancesystem.schedule.repository.ScheduleRepository;
+import com.backend.attendancesystem.user.dto.UserCourseResponse;
 import com.backend.attendancesystem.user.dto.UserRequest;
 import com.backend.attendancesystem.user.dto.UserResponse;
 import com.backend.attendancesystem.user.mapper.UserMapper;
@@ -11,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +24,7 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final InstitutionRepository institutionRepository;
+    private final ScheduleRepository scheduleRepository;
 
     @Transactional
     public UserResponse saveUser(UserRequest request) {
@@ -68,6 +74,16 @@ public class UserService {
         return userRepository.findAll().stream()
                 .map(UserMapper::toResponse)
                 .toList();
+    }
+
+    public List<UserCourseResponse> getTodayCourses(UUID userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        WeekDay today = WeekDayMapper.convertDayOfWeek(LocalDate.now().getDayOfWeek());
+
+        return scheduleRepository.findCoursesByUserAndWeekDay(userId, today);
+
     }
 
     //helper method
