@@ -97,4 +97,5 @@ public class EnrollmentService {
                 .map(EnrollmentMapper::toResponse)
                 .toList();
     }
+
 }

@@ -37,33 +37,8 @@ public class AttendanceService {
 
     @Transactional
     public AttendanceResponse saveAttendance(AttendanceRequest request) {
-        //check 1
-        StudentEntity student = studentRepository.findById(request.studentId()).orElseThrow(() ->
-                new EntityNotFoundException("Student not found with id: " + request.studentId()));
-        //check 2
-        CourseEntity course = courseRepository.findById(request.courseId()).orElseThrow(() ->
-                new EntityNotFoundException("Course not found with id: " + request.courseId()));
-        //check 3
-        InstitutionEntity institution = institutionRepository.findById(request.institutionId()).orElseThrow(() ->
-                new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
-        //check 4
-        UserEntity user = userRepository.findById(request.userId()).orElseThrow(() ->
-                new EntityNotFoundException("User not found with id: " + request.userId()));
-        //check 5
-        if (!student.getInstitution().equals(institution) || !course.getInstitution().equals(institution)
-            || !user.getInstitution().equals(institution)) {
-            throw new InvalidInstitutionException("Student, course and user must match in the same institution");
-        }
-
-        //check 6
-        EnrollmentId enrollmentId = new EnrollmentId();
-        enrollmentId.setCourseId(request.courseId());
-        enrollmentId.setStudentId(request.studentId());
-
-        if (!enrollmentRepository.existsById(enrollmentId)) {
-            throw new StudentCourseException("Student is not enrolled in the course");
-        }
-
+        //check request
+        validateAttendanceRequest(request);
 
         return AttendanceMapper.toResponse(
                 attendanceRepository.save(
@@ -76,38 +51,14 @@ public class AttendanceService {
         //check 1
         AttendanceEntity attendance = attendanceRepository.findById(attendanceId)
                 .orElseThrow(() -> new EntityNotFoundException("Attendance not found with the id: " + attendanceId));
-        //check 2
-        StudentEntity student = studentRepository.findById(request.studentId()).orElseThrow(() ->
-                new EntityNotFoundException("Student not found with id: " + request.studentId()));
-        //check 3
-        CourseEntity course = courseRepository.findById(request.courseId()).orElseThrow(() ->
-                new EntityNotFoundException("Course not found with id: " + request.courseId()));
-        //check 4
-        InstitutionEntity institution = institutionRepository.findById(request.institutionId()).orElseThrow(() ->
-                new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
-        //check 5
-        UserEntity user = userRepository.findById(request.userId()).orElseThrow(() ->
-                new EntityNotFoundException("User not found with id: " + request.userId()));
 
-        //check 6
-        if (!student.getInstitution().equals(institution) || !course.getInstitution().equals(institution)
-                || !user.getInstitution().equals(institution)) {
-            throw new InvalidInstitutionException("Student, course and user must match in the same institution");
-        }
+        //check request
+        var validatedAttendance = validateAttendanceRequest(request);
 
-        //check 7
-        EnrollmentId enrollmentId = new EnrollmentId();
-        enrollmentId.setCourseId(request.courseId());
-        enrollmentId.setStudentId(request.studentId());
-
-        if (!enrollmentRepository.existsById(enrollmentId)) {
-            throw new StudentCourseException("Student is not enrolled in the course");
-        }
-
-        attendance.setStudent(student);
-        attendance.setCourse(course);
-        attendance.setInstitution(institution);
-        attendance.setUser(user);
+        attendance.setStudent(validatedAttendance.student);
+        attendance.setCourse(validatedAttendance.course);
+        attendance.setInstitution(validatedAttendance.institution);
+        attendance.setUser(validatedAttendance.user);
         attendance.setAttendanceDate(request.attendanceDate());
         attendance.setStatus(request.status());
         attendance.setObservations(request.observations());
@@ -135,4 +86,54 @@ public class AttendanceService {
                 .map(AttendanceMapper::toResponse)
                 .toList();
     }
+
+    // helper method
+    private ValidatedAttendanceEntities validateAttendanceRequest(AttendanceRequest request) {
+        StudentEntity student = studentRepository.findById(request.studentId()).orElseThrow(() ->
+                new EntityNotFoundException("Student not found with id: " + request.studentId()));
+
+        CourseEntity course = courseRepository.findById(request.courseId()).orElseThrow(() ->
+                new EntityNotFoundException("Course not found with id: " + request.courseId()));
+
+        InstitutionEntity institution = institutionRepository.findById(request.institutionId()).orElseThrow(() ->
+                new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+
+        UserEntity user = userRepository.findById(request.userId()).orElseThrow(() ->
+                new EntityNotFoundException("User not found with id: " + request.userId()));
+
+
+        if (!isValidInstitutionRule(institution, student, course, user)) {
+            throw new InvalidInstitutionException("Student, course and user must match in the same institution");
+        }
+
+
+        if (!isStudentEnrolledInCourse(course.getCourseId(), student.getStudentId())) {
+            throw new StudentCourseException("Student is not enrolled in the course");
+        }
+
+        return new ValidatedAttendanceEntities(student, course, institution, user);
+    }
+
+    // helper method
+    private boolean isValidInstitutionRule(InstitutionEntity institution, StudentEntity student, CourseEntity course, UserEntity user) {
+        return institution.equals(student.getInstitution())
+                && institution.equals(course.getInstitution())
+                && institution.equals(user.getInstitution());
+    }
+
+    // helper method
+    private boolean isStudentEnrolledInCourse(UUID courseId, UUID studentId) {
+        EnrollmentId enrollmentId = new EnrollmentId();
+        enrollmentId.setCourseId(courseId);
+        enrollmentId.setStudentId(studentId);
+
+        return enrollmentRepository.existsById(enrollmentId);
+    }
+
+    private record ValidatedAttendanceEntities(
+            StudentEntity student,
+            CourseEntity course,
+            InstitutionEntity institution,
+            UserEntity user
+    ) {}
 }

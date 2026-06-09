@@ -22,9 +22,8 @@ public class UserService {
 
     @Transactional
     public UserResponse saveUser(UserRequest request) {
-        //check 1
-        institutionRepository.findById(request.institutionId())
-                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+        //check request
+        validateInstitutionExists(request.institutionId());
 
         return UserMapper.toResponse(
                 userRepository.save(
@@ -39,8 +38,7 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 
         //check 2
-        institutionRepository.findById(request.institutionId())
-                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+        validateInstitutionExists(request.institutionId());
 
         user.setRole(request.role());
         user.setName(request.name());
@@ -70,5 +68,11 @@ public class UserService {
         return userRepository.findAll().stream()
                 .map(UserMapper::toResponse)
                 .toList();
+    }
+
+    //helper method
+    private void validateInstitutionExists(UUID institutionId) {
+        institutionRepository.findById(institutionId)
+                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + institutionId));
     }
 }
