@@ -22,9 +22,8 @@ public class StudentService {
 
     @Transactional
     public StudentResponse saveStudent(StudentRequest request) {
-        //check 1
-        institutionRepository.findById(request.institutionId())
-                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+        //check request
+        validateInstitutionExists(request.institutionId());
 
         return StudentMapper.toResponse(
                 studentRepository.save(
@@ -39,8 +38,7 @@ public class StudentService {
                 .orElseThrow(() -> new EntityNotFoundException("Student not found with id: " + studentId));
 
         //check 2
-        institutionRepository.findById(request.institutionId())
-                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+        validateInstitutionExists(request.institutionId());
 
         student.setName(request.name());
         student.setLastName(request.lastName());
@@ -69,5 +67,10 @@ public class StudentService {
         return studentRepository.findAll().stream()
                 .map(StudentMapper::toResponse)
                 .toList();
+    }
+
+    private void validateInstitutionExists(UUID institutionId) {
+        institutionRepository.findById(institutionId)
+                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + institutionId));
     }
 }

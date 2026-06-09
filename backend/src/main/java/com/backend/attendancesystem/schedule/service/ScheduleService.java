@@ -31,19 +31,8 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponse saveSchedule(ScheduleRequest request) {
-        //check 1
-        InstitutionEntity institution = institutionRepository.findById(request.institutionId())
-                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
-        //check 2
-        CourseEntity course = courseRepository.findById(request.courseId())
-                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + request.courseId()));
-        //check 3
-        UserEntity user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + request.userId()));
-        //check 4
-        if (!course.getInstitution().equals(institution) || !user.getInstitution().equals(course.getInstitution())) {
-            throw new InvalidInstitutionException("User and course must be from the same institution");
-        }
+        //check request
+        validateScheduleRequest(request);
 
         return ScheduleMapper.toResponse(
                 scheduleRepository.save(
@@ -56,23 +45,13 @@ public class ScheduleService {
         //check 1
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new EntityNotFoundException("Schedule not found with id: " + scheduleId));
+
         //check 2
-        InstitutionEntity institution = institutionRepository.findById(request.institutionId())
-                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
-        //check 3
-        CourseEntity course = courseRepository.findById(request.courseId())
-                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + request.courseId()));
-        //check 4
-        UserEntity user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + request.userId()));
+        var validatedEntities = validateScheduleRequest(request);
 
-        if (!course.getInstitution().equals(institution) || !user.getInstitution().equals(course.getInstitution())) {
-            throw new InvalidInstitutionException("User and course must be from the same institution");
-        }
-
-        schedule.setInstitution(institution);
-        schedule.setCourse(course);
-        schedule.setUser(user);
+        schedule.setInstitution(validatedEntities.institution());
+        schedule.setCourse(validatedEntities.course());
+        schedule.setUser(validatedEntities.user());
         schedule.setDay(request.day());
         schedule.setFromTime(request.fromTime());
         schedule.setToTime(request.toTime());
@@ -100,4 +79,28 @@ public class ScheduleService {
                 .map(ScheduleMapper::toResponse)
                 .toList();
     }
+
+    //helper method
+    private ValidatedScheduleEntities validateScheduleRequest(ScheduleRequest request) {
+        InstitutionEntity institution = institutionRepository.findById(request.institutionId())
+                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+
+        CourseEntity course = courseRepository.findById(request.courseId())
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + request.courseId()));
+
+        UserEntity user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + request.userId()));
+
+        if (!course.getInstitution().equals(institution) || !user.getInstitution().equals(course.getInstitution())) {
+            throw new InvalidInstitutionException("User and course must be from the same institution");
+        }
+
+        return new ValidatedScheduleEntities(institution, course, user);
+    }
+
+    private record ValidatedScheduleEntities(
+            InstitutionEntity institution,
+            CourseEntity course,
+            UserEntity user
+    ) {}
 }

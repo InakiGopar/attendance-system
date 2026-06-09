@@ -22,9 +22,8 @@ public class CourseService {
 
     @Transactional
     public CourseResponse saveCourse(CourseRequest request) {
-        //check 1
-        institutionRepository.findById(request.institutionId())
-                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+        //check request
+        validateInstitutionExists(request.institutionId());
 
         return CourseMapper.toResponse(
                 courseRepository.save(
@@ -39,8 +38,7 @@ public class CourseService {
                 .orElseThrow(() -> new EntityNotFoundException("Course not found with the id: " + courseId));
 
         //check 2
-        institutionRepository.findById(request.institutionId())
-                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + request.institutionId()));
+        validateInstitutionExists(request.institutionId());
 
         course.setName(request.name());
 
@@ -66,5 +64,11 @@ public class CourseService {
         return courseRepository.findAll().stream()
                 .map(CourseMapper::toResponse)
                 .toList();
+    }
+
+    //helper method
+    private void validateInstitutionExists(UUID institutionId) {
+        institutionRepository.findById(institutionId)
+                .orElseThrow(() -> new EntityNotFoundException("Institution not found with id: " + institutionId));
     }
 }
