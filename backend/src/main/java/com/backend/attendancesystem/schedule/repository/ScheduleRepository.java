@@ -2,7 +2,7 @@ package com.backend.attendancesystem.schedule.repository;
 
 import com.backend.attendancesystem.enums.WeekDay;
 import com.backend.attendancesystem.schedule.model.ScheduleEntity;
-import com.backend.attendancesystem.user.dto.UserCourseResponse;
+import com.backend.attendancesystem.user.dto.response.UserCourseResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface ScheduleRepository extends JpaRepository<ScheduleEntity, UUID> {
 
     @Query("""
-    SELECT DISTINCT new com.backend.attendancesystem.user.dto.UserCourseResponse(
+    SELECT new com.backend.attendancesystem.user.dto.response.UserCourseResponse(
         c.courseId,
         c.name,
         s.fromTime,

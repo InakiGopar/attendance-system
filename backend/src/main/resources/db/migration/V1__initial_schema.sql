@@ -20,6 +20,7 @@ CREATE TYPE week_day AS ENUM (
     'FRIDAY'
 );
 
+
 CREATE TABLE institution (
                              institution_id UUID PRIMARY KEY,
 
@@ -41,7 +42,7 @@ CREATE TABLE app_user (
                           last_name VARCHAR(100) NOT NULL,
 
                           email VARCHAR(255) NOT NULL UNIQUE,
-                          password VARCHAR(255) NOT NULL,
+                          password VARCHAR(255),
 
                           created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

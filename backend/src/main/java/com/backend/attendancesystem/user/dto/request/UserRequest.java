@@ -1,4 +1,4 @@
-package com.backend.attendancesystem.user.dto;
+package com.backend.attendancesystem.user.dto.request;
 
 import com.backend.attendancesystem.enums.RoleType;
 import jakarta.validation.constraints.Email;

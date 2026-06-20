@@ -1,13 +1,16 @@
 package com.backend.attendancesystem.user.controller;
 
-import com.backend.attendancesystem.user.dto.UserCourseResponse;
-import com.backend.attendancesystem.user.dto.UserRequest;
-import com.backend.attendancesystem.user.dto.UserResponse;
+import com.backend.attendancesystem.user.dto.response.CurrentUserResponse;
+import com.backend.attendancesystem.user.dto.response.UserCourseResponse;
+import com.backend.attendancesystem.user.dto.request.UserRequest;
+import com.backend.attendancesystem.user.dto.response.UserResponse;
 import com.backend.attendancesystem.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +44,21 @@ public class UserController {
     public ResponseEntity<UserResponse> getUser(@PathVariable UUID userId) {
         return ResponseEntity.ok(userService.getUser(userId));
     }
+
+    @GetMapping("/me")
+    public CurrentUserResponse me(
+            Authentication authentication
+    ) {
+
+        OAuth2User oauthUser =
+                (OAuth2User) authentication.getPrincipal();
+
+        String email =
+                oauthUser.getAttribute("email");
+
+        return userService.getCurrentUserInfo(email);
+    }
+
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUsers() {

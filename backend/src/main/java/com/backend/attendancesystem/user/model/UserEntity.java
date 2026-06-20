@@ -28,7 +28,7 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "role", columnDefinition = "role_type", nullable = false)
+    @Column(name = "role", columnDefinition = "role_type")
     private RoleType role;
 
     @Column(name = "name", nullable = false)
@@ -40,10 +40,10 @@ public class UserEntity {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)

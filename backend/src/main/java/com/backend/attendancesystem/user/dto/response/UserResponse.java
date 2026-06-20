@@ -1,4 +1,4 @@
-package com.backend.attendancesystem.user.dto;
+package com.backend.attendancesystem.user.dto.response;
 
 import com.backend.attendancesystem.enums.RoleType;
 
