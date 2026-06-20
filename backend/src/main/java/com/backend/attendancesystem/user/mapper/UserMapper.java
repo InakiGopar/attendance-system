@@ -1,8 +1,8 @@
 package com.backend.attendancesystem.user.mapper;
 
 import com.backend.attendancesystem.institution.model.InstitutionEntity;
-import com.backend.attendancesystem.user.dto.UserRequest;
-import com.backend.attendancesystem.user.dto.UserResponse;
+import com.backend.attendancesystem.user.dto.request.UserRequest;
+import com.backend.attendancesystem.user.dto.response.UserResponse;
 import com.backend.attendancesystem.user.model.UserEntity;
 
 import java.util.UUID;

@@ -1,12 +1,15 @@
 package com.backend.attendancesystem.user.service;
 
+import com.backend.attendancesystem.auth.dto.GoogleUserInfo;
+import com.backend.attendancesystem.enums.RoleType;
 import com.backend.attendancesystem.enums.WeekDay;
 import com.backend.attendancesystem.enums.mapper.WeekDayMapper;
 import com.backend.attendancesystem.institution.repository.InstitutionRepository;
 import com.backend.attendancesystem.schedule.repository.ScheduleRepository;
-import com.backend.attendancesystem.user.dto.UserCourseResponse;
-import com.backend.attendancesystem.user.dto.UserRequest;
-import com.backend.attendancesystem.user.dto.UserResponse;
+import com.backend.attendancesystem.user.dto.response.CurrentUserResponse;
+import com.backend.attendancesystem.user.dto.response.UserCourseResponse;
+import com.backend.attendancesystem.user.dto.request.UserRequest;
+import com.backend.attendancesystem.user.dto.response.UserResponse;
 import com.backend.attendancesystem.user.mapper.UserMapper;
 import com.backend.attendancesystem.user.model.UserEntity;
 import com.backend.attendancesystem.user.repository.UserRepository;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -56,6 +60,24 @@ public class UserService {
     }
 
     @Transactional
+    public void registerOAuth2User(GoogleUserInfo userInfo, String institutionId) {
+
+        System.out.println("llego al servicio! " + institutionId);
+
+        UserEntity user = new UserEntity();
+
+        user.setUserId(UUID.randomUUID());
+        user.setEmail(userInfo.email());
+        user.setName(userInfo.name());
+        user.setLastName(userInfo.lastName());
+
+        user.setRole(RoleType.TEACHER);
+
+        userRepository.save(user);
+
+    }
+
+    @Transactional
     public void deleteUser(UUID userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId ));
@@ -67,8 +89,26 @@ public class UserService {
                  userRepository.findById(userId)
                          .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId))
          );
-
     }
+
+    public CurrentUserResponse getCurrentUserInfo(String email) {
+
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "User not found with email: " + email
+                        ));
+
+        return new CurrentUserResponse(
+                user.getUserId(),
+                user.getName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getInstitution().getInstitutionId(),
+                user.getRole()
+        );
+    }
+
 
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
@@ -84,6 +124,10 @@ public class UserService {
 
         return scheduleRepository.findCoursesByUserAndWeekDay(userId, today);
 
+    }
+
+    public Optional<UserEntity> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     //helper method

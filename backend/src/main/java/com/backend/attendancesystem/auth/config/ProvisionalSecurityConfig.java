@@ -1,4 +1,4 @@
-package com.backend.attendancesystem;
+package com.backend.attendancesystem.auth.config;
 
 import java.util.Arrays;
 
@@ -12,13 +12,19 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import com.backend.attendancesystem.auth.service.CustomOAuth2UserService;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class ProvisionalSecurityConfig {
 
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
+
+    private final CustomAuthorizationRequestRepository customAuthorizationRequestRepository;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -26,14 +32,21 @@ public class ProvisionalSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login**", "/error").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/", "/login**", "/error")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.sendError(HttpStatus.UNAUTHORIZED.value());
-                        }))
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpStatus.UNAUTHORIZED.value())
+                        ))
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl(frontendUrl, true));
+
+                        .authorizationEndpoint(endpoint -> endpoint
+                                .authorizationRequestRepository(customAuthorizationRequestRepository)
+                        )
+                        .successHandler(customOAuth2SuccessHandler)
+                );
 
         return http.build();
     }
