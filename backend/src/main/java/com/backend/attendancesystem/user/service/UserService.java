@@ -4,6 +4,7 @@ import com.backend.attendancesystem.auth.dto.GoogleUserInfo;
 import com.backend.attendancesystem.enums.RoleType;
 import com.backend.attendancesystem.enums.WeekDay;
 import com.backend.attendancesystem.enums.mapper.WeekDayMapper;
+import com.backend.attendancesystem.institution.model.InstitutionEntity;
 import com.backend.attendancesystem.institution.repository.InstitutionRepository;
 import com.backend.attendancesystem.schedule.repository.ScheduleRepository;
 import com.backend.attendancesystem.user.dto.response.CurrentUserResponse;
@@ -41,6 +42,7 @@ public class UserService {
                 ));
     }
 
+
     @Transactional
     public UserResponse updateUser(UUID userId, UserRequest request) {
         //check 1
@@ -59,23 +61,6 @@ public class UserService {
         return UserMapper.toResponse(user);
     }
 
-    @Transactional
-    public void registerOAuth2User(GoogleUserInfo userInfo, String institutionId) {
-
-        System.out.println("llego al servicio! " + institutionId);
-
-        UserEntity user = new UserEntity();
-
-        user.setUserId(UUID.randomUUID());
-        user.setEmail(userInfo.email());
-        user.setName(userInfo.name());
-        user.setLastName(userInfo.lastName());
-
-        user.setRole(RoleType.TEACHER);
-
-        userRepository.save(user);
-
-    }
 
     @Transactional
     public void deleteUser(UUID userId) {
