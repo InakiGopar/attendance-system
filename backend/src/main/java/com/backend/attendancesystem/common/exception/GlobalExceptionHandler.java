@@ -109,6 +109,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
+    @ExceptionHandler(InvalidSessionAttribute.class)
+    public ResponseEntity<ApiError> handleInvalidSessionAttribute(InvalidSessionAttribute ex) {
+        ApiError body = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                List.of(ex.getMessage())
+        );
+        return ResponseEntity.badRequest().body(body);
+    }
+
     // Handle generic exception
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGenericException(Exception ex) {

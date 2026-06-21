@@ -6,7 +6,6 @@ import com.backend.attendancesystem.course.repository.CourseRepository;
 import com.backend.attendancesystem.enrollment.dto.EnrollmentRequest;
 import com.backend.attendancesystem.enrollment.dto.EnrollmentResponse;
 import com.backend.attendancesystem.enrollment.mapper.EnrollmentMapper;
-import com.backend.attendancesystem.enrollment.model.EnrollmentEntity;
 import com.backend.attendancesystem.enrollment.model.EnrollmentId;
 import com.backend.attendancesystem.enrollment.repository.EnrollmentRepository;
 import com.backend.attendancesystem.student.model.StudentEntity;
@@ -17,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

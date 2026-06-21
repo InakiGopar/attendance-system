@@ -1,6 +1,9 @@
 package com.backend.attendancesystem.auth.config;
 
 import com.backend.attendancesystem.auth.dto.GoogleUserInfo;
+import com.backend.attendancesystem.common.exception.InvalidSessionAttribute;
+import com.backend.attendancesystem.enums.RoleType;
+import com.backend.attendancesystem.user.dto.request.UserRequest;
 import com.backend.attendancesystem.user.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +17,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
@@ -33,12 +37,20 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         HttpSession session = request.getSession(false);
 
-        String institutionId = null;
+        UUID institutionId = null;
 
         if (session != null) {
-            institutionId = (String) session.getAttribute(
+            var sessionAttribute = (String) session.getAttribute(
                     CustomAuthorizationRequestRepository.INSTITUTION_ID_ATTR
             );
+
+            try {
+                institutionId = UUID.fromString(sessionAttribute);
+            }
+            catch (IllegalArgumentException e) {
+                throw new InvalidSessionAttribute("Institution ID stored in session is invalid");
+            }
+
         }
 
         OAuth2User principal =
@@ -55,11 +67,10 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 "InstitutionId recuperado: " + institutionId
         );
 
-        //if the user does not exist, create it with the institution id provided by the invitation
+        //if the user does not exist, create it with the institution id provided by the sessionAttribute
         if (userService.getUserByEmail(principal.getAttribute("email")).isEmpty()) {
-            userService.registerOAuth2User(
-                    userInfo,
-                    institutionId
+            userService.saveUser(
+                    new UserRequest(institutionId, RoleType.TEACHER, userInfo.name(), userInfo.lastName(), userInfo.email(), "")
             );
         }
 
